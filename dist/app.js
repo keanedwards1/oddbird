@@ -213,6 +213,8 @@ mainNav.querySelectorAll("a").forEach((link) => {
   });
 });
 
+// GSAP is loaded from the CDN; ScrollTrigger registration and usage follow:
+// https://gsap.com/docs/v3/Installation/ and https://gsap.com/docs/v3/Plugins/ScrollTrigger/
 if (window.gsap && window.ScrollTrigger && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   gsap.registerPlugin(ScrollTrigger);
   const heroTimeline = gsap.timeline({ defaults: { ease: "power3.out" } });
