@@ -2,205 +2,454 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#ff4f37" />
-    <meta
-      name="description"
-      content="Oddbird makes bright, botanical zero-proof drinks for whatever the occasion becomes."
-    />
-    <title>Oddbird — good drinks, clear heads</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6efe4" />
+    <meta name="description" content="Oddbird makes sparkling botanical aperitifs with real citrus and bitter herbs. Zero proof, all ritual." />
+    <title>Oddbird — Sparkling botanical aperitifs, zero proof</title>
+    <script>document.documentElement.classList.add("js");</script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400..600&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="assets/hero-cans.webp" type="image/webp" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23f4553b'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-style='italic' font-size='44' text-anchor='middle' fill='%232b0a10'%3Eo%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js" defer></script>
     <script src="app.js" defer></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.min.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module" src="webgl.js"></script>
   </head>
   <body>
-    <div class="announcement">
-      <p>Oddbird is on the way <span>·</span> Free shipping on 2+ packs</p>
-      <a href="#flock">See all three drinks <span aria-hidden="true">↗</span></a>
+    <!-- Shared SVG: the Oddbird can, drawn once and reused everywhere -->
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="g-metal" x1="0" x2="1">
+          <stop offset="0" stop-color="#6f747a" /><stop offset=".2" stop-color="#d9dde1" />
+          <stop offset=".38" stop-color="#f6f7f8" /><stop offset=".55" stop-color="#b6bbc1" />
+          <stop offset=".8" stop-color="#e3e6e9" /><stop offset="1" stop-color="#70757b" />
+        </linearGradient>
+        <linearGradient id="g-lid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#eef0f2" /><stop offset="1" stop-color="#a7acb2" />
+        </linearGradient>
+        <linearGradient id="g-shade" x1="0" x2="1">
+          <stop offset="0" stop-color="#1a0508" stop-opacity=".42" />
+          <stop offset=".1" stop-color="#1a0508" stop-opacity=".12" />
+          <stop offset=".27" stop-color="#fff" stop-opacity=".2" />
+          <stop offset=".34" stop-color="#fff" stop-opacity=".05" />
+          <stop offset=".62" stop-color="#1a0508" stop-opacity="0" />
+          <stop offset=".88" stop-color="#1a0508" stop-opacity=".16" />
+          <stop offset="1" stop-color="#1a0508" stop-opacity=".46" />
+        </linearGradient>
+        <clipPath id="clip-can">
+          <path d="M8 58V514c0 12 6 22 14 26 2 10 10 16 22 17h112c12-1 20-7 22-17 8-4 14-14 14-26V58c0-20-20-28-20-42H28c0 14-20 22-20 42Z" />
+        </clipPath>
+
+        <symbol id="can-shell" viewBox="0 0 200 560">
+          <path d="M22 540h156c-2 10-10 16-22 17H44c-12-1-20-7-22-17Z" fill="url(#g-metal)" />
+          <path d="M28 16c0 14-20 22-20 42h184c0-20-20-28-20-42Z" fill="url(#g-metal)" />
+          <ellipse cx="100" cy="16" rx="72" ry="9" fill="url(#g-lid)" />
+          <ellipse cx="100" cy="16" rx="64" ry="7" fill="none" stroke="#8d9298" stroke-width="1.2" />
+          <ellipse cx="100" cy="14.5" rx="15" ry="4" fill="#c9cdd2" stroke="#8d9298" stroke-width="1" />
+          <path d="M8 58h184v456c0 12-6 22-14 26H22c-8-4-14-14-14-26Z" fill="currentColor" />
+        </symbol>
+        <symbol id="can-light" viewBox="0 0 200 560">
+          <rect width="200" height="560" fill="url(#g-shade)" clip-path="url(#clip-can)" />
+          <rect x="50" y="20" width="9" height="530" fill="#fff" opacity=".16" clip-path="url(#clip-can)" />
+        </symbol>
+
+        <symbol id="can-label" viewBox="0 0 200 560">
+          <g fill="#340c14">
+            <text x="100" y="92" text-anchor="middle" class="can-caps">SPARKLING</text>
+            <text x="100" y="104" text-anchor="middle" class="can-caps">BOTANICAL</text>
+            <rect x="76" y="113" width="48" height="1" />
+            <text transform="translate(134 296) rotate(-90)" text-anchor="middle" class="can-word">Oddbird</text>
+            <text x="100" y="509" text-anchor="middle" class="can-spec">0.0% ALC · 355 ML</text>
+          </g>
+        </symbol>
+
+        <symbol id="can-pink" viewBox="0 0 200 560">
+          <g color="#f7a497"><use href="#can-shell" /></g>
+          <use href="#can-label" />
+          <g fill="#340c14" class="can-serif">
+            <text x="100" y="133" text-anchor="middle" class="can-no">N° 01</text>
+            <text x="100" y="463" text-anchor="middle" class="can-flavor">Pink</text>
+            <text x="100" y="484" text-anchor="middle" class="can-flavor">Grapefruit</text>
+          </g>
+          <use href="#can-light" />
+        </symbol>
+        <symbol id="can-orange" viewBox="0 0 200 560">
+          <g color="#f27a1f"><use href="#can-shell" /></g>
+          <use href="#can-label" />
+          <g fill="#340c14" class="can-serif">
+            <text x="100" y="133" text-anchor="middle" class="can-no">N° 02</text>
+            <text x="100" y="463" text-anchor="middle" class="can-flavor">Blood</text>
+            <text x="100" y="484" text-anchor="middle" class="can-flavor">Orange</text>
+          </g>
+          <use href="#can-light" />
+        </symbol>
+        <symbol id="can-yuzu" viewBox="0 0 200 560">
+          <g color="#efd36a"><use href="#can-shell" /></g>
+          <use href="#can-label" />
+          <g fill="#340c14" class="can-serif">
+            <text x="100" y="133" text-anchor="middle" class="can-no">N° 03</text>
+            <text x="100" y="463" text-anchor="middle" class="can-flavor">Yuzu</text>
+            <text x="100" y="484" text-anchor="middle" class="can-flavor">Bloom</text>
+          </g>
+          <use href="#can-light" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Intro curtain (only shown once per session, skipped for reduced motion) -->
+    <div class="intro" aria-hidden="true">
+      <p class="intro__word"><span>O</span><span>d</span><span>d</span><span>b</span><span>i</span><span>r</span><span>d</span></p>
+      <p class="intro__meta">Sparkling botanical aperitifs</p>
     </div>
 
-    <header class="site-header">
-      <a class="wordmark" href="#" aria-label="Oddbird home">odd<span>bird</span><i>®</i></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
-        <span class="menu-toggle__label">Menu</span>
-        <span class="menu-toggle__icon" aria-hidden="true"><i></i><i></i></span>
-      </button>
-      <nav class="main-nav" id="main-nav" aria-label="Main navigation">
-        <a href="#flock">Our flavors</a>
-        <a href="#mix">Mix your mood</a>
-        <a href="#why-odd">Why odd?</a>
+    <header class="header" data-header>
+      <nav class="header__nav" aria-label="Primary">
+        <a href="#lineup">Flavors</a>
+        <a href="#mixed">Shop</a>
+        <a href="#rituals">Rituals</a>
+        <a href="#story">Story</a>
       </nav>
-      <a class="bag-link" href="#flock">Shop <span class="bag-count" aria-label="0 items in bag">0</span></a>
+      <a class="logo" href="#top" aria-label="Oddbird, back to top">Oddbird</a>
+      <div class="header__actions">
+        <a class="header__muted" href="#newsletter">Join the list</a>
+        <button class="cart-trigger" type="button" aria-controls="cart" aria-expanded="false" data-cart-open>
+          Cart <span class="cart-trigger__count" data-cart-count>0</span>
+        </button>
+        <button class="menu-trigger" type="button" aria-controls="menu" aria-expanded="false" data-menu-toggle>
+          <span class="menu-trigger__label">Menu</span>
+          <span class="menu-trigger__bars" aria-hidden="true"><i></i><i></i></span>
+        </button>
+      </div>
     </header>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__copy">
-          <p class="eyebrow"><span class="eyebrow__spark">✳</span> Botanical sparkling drinks</p>
-          <h1 id="hero-title">A good pour.<br /><em>Your call.</em></h1>
-          <p class="hero__intro">
-            Bright citrus and bitter herbs for whatever the evening turns into.
-            Oddbird has no alcohol, so tomorrow stays yours.
+    <div class="menu" id="menu" data-menu inert>
+      <nav aria-label="Mobile">
+        <a href="#lineup"><small>01</small>Flavors</a>
+        <a href="#mixed"><small>02</small>Shop the case</a>
+        <a href="#rituals"><small>03</small>Rituals</a>
+        <a href="#story"><small>04</small>Our story</a>
+      </nav>
+      <p class="menu__foot">Zero proof. All ritual.</p>
+    </div>
+
+    <main id="main">
+      <!-- ============ HERO ============ -->
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero__media">
+          <div class="hero__layer" data-hero-layer>
+          <picture>
+            <source srcset="assets/hero-cans.webp" type="image/webp" />
+            <img src="assets/hero-cans.jpg" width="1536" height="1024" alt="Oddbird Pink Grapefruit and Blood Orange cans beside a ruby spritz with rosemary, halved grapefruit and ice on a sunlit yellow table" fetchpriority="high" />
+          </picture>
+          <!-- Cinemagraph: same frame as the photo, with the spritz fizzing and
+               drops running down the cans. Plays once the hero reveals. -->
+          <video class="hero__video" data-hero-video muted loop playsinline preload="auto" poster="assets/hero-cans.jpg" aria-hidden="true" tabindex="-1">
+            <source src="assets/hero-cans.webm" type="video/webm" />
+            <source src="assets/hero-cans.mp4" type="video/mp4" />
+          </video>
+          </div>
+        </div>
+        <div class="hero__content">
+          <p class="kicker hero__kicker" data-hero-fade>Sparkling botanical aperitifs</p>
+          <h1 class="hero__title" id="hero-title" data-split>Stay for <em>one more.</em></h1>
+          <p class="hero__lede" data-hero-fade>Real citrus and bitter herbs, poured over ice. Zero proof, so the night can run long and tomorrow stays yours.</p>
+          <div class="hero__ctas" data-hero-fade>
+            <a class="btn btn--ink" href="#mixed"><span class="btn__text" data-text="Shop the mixed case">Shop the mixed case</span></a>
+            <a class="link-arrow" href="#lineup">Meet the flavors <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <p class="hero__scroll" data-hero-fade aria-hidden="true"><span></span>Scroll</p>
+      </section>
+
+      <!-- ============ STORY / MANIFESTO ============ -->
+      <section class="story" id="story" aria-labelledby="story-title">
+        <div class="wrap story__grid">
+          <p class="section-index">(01) <span>Point of view</span></p>
+          <h2 class="visually-hidden" id="story-title">Our point of view</h2>
+          <p class="story__statement" data-words>
+            We make sparkling aperitifs for the long table. Bright citrus, a bitter backbone and nothing that follows you home. You still get the ritual: the clink, the second pour, the last ones out.
           </p>
-          <div class="hero__actions">
-            <a class="button button--dark" href="#flock">Find a flavor <span aria-hidden="true">↗</span></a>
-            <a class="text-link" href="#mix">Mix a drink <span aria-hidden="true">↓</span></a>
-          </div>
-          <div class="hero__notes">
-            <span><b>0.0%</b> alcohol</span>
-            <span class="note-divider" aria-hidden="true"></span>
-            <span><b>100%</b> your choice</span>
-          </div>
-          <span class="hero__doodle hero__doodle--one" aria-hidden="true">✳</span>
-          <span class="hero__doodle hero__doodle--two" aria-hidden="true">✳</span>
         </div>
-        <div class="hero__art">
-          <img src="assets/oddbird-hero.png" alt="Two colorful sparkling drink cans beside a ruby citrus spritz and fresh grapefruit" />
-          <div class="hero-sticker" aria-hidden="true"><span>Tonight<br />stays yours</span><b>✳</b></div>
-          <div class="hero-caption"><span>ODDBIRD / 001</span><span>A good pour for your kind of night</span></div>
-        </div>
-        <div class="hero__ticker" aria-hidden="true">
-          <div class="ticker-track">
-            <span>a good pour, your call</span><b>✳</b><span>a good pour, your call</span><b>✳</b><span>a good pour, your call</span><b>✳</b>
-          </div>
+        <div class="wrap">
+          <ul class="pillars">
+            <li class="pillar">
+              <span class="pillar__figure">0.0<small>%</small></span>
+              <h3>Zero proof, always</h3>
+              <p>No alcohol, no fuss. Bitterness and bubbles give it the bite.</p>
+            </li>
+            <li class="pillar">
+              <span class="pillar__figure">Real</span>
+              <h3>Pressed citrus</h3>
+              <p>Grapefruit, blood orange and yuzu, made from real fruit.</p>
+            </li>
+            <li class="pillar">
+              <span class="pillar__figure">Bitter</span>
+              <h3>Herbs, not syrup</h3>
+              <p>Gentian, rosemary and cardamom stand in for the sugar.</p>
+            </li>
+          </ul>
         </div>
       </section>
 
-      <section class="intro-strip" id="why-odd">
-        <span class="intro-strip__label">A toast to the evening</span>
-        <p>Stay for one more song.<br /><em>Leave when you’re ready.</em></p>
-        <span class="intro-strip__scribble" aria-hidden="true">↘</span>
-      </section>
+      <!-- ============ LINEUP (pinned horizontal on desktop) ============ -->
+      <section class="lineup" id="lineup" aria-labelledby="lineup-title">
+        <div class="lineup__viewport">
+          <div class="lineup__track" data-track>
+            <div class="panel panel--intro">
+              <p class="section-index">(02) <span>The lineup</span></p>
+              <h2 class="panel__heading" id="lineup-title">Three birds.<br /><em>Three moods.</em></h2>
+              <p class="panel__copy">Each one starts with real citrus and ends bitter and dry. Pick one for tonight, or get all three in the mixed case.</p>            </div>
 
-      <section class="flock-section section-pad" id="flock" aria-labelledby="flock-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Three ways to pour</p>
-            <h2 id="flock-title">Pick your <em>flavor.</em></h2>
-          </div>
-          <p class="section-heading__aside">Start with the flavor notes you like.<br />We’ll take it from there.</p>
-        </div>
-        <div class="flavor-layout">
-          <div class="flavor-tabs" role="group" aria-label="Choose a flavor">
-            <button class="flavor-tab is-active" type="button" aria-pressed="true" data-flavor="pink">
-              <span class="flavor-tab__number">01</span><span>Pink Grapefruit</span><i aria-hidden="true">↗</i>
-            </button>
-            <button class="flavor-tab" type="button" aria-pressed="false" data-flavor="orange">
-              <span class="flavor-tab__number">02</span><span>Blood Orange</span><i aria-hidden="true">↗</i>
-            </button>
-            <button class="flavor-tab" type="button" aria-pressed="false" data-flavor="blue">
-              <span class="flavor-tab__number">03</span><span>Yuzu Bloom</span><i aria-hidden="true">↗</i>
-            </button>
-            <div class="flavor-detail" aria-live="polite">
-              <p class="flavor-detail__tag">THE BRIGHT ONE</p>
-              <h3 class="flavor-detail__name">Pink<br />Grapefruit</h3>
-              <p class="flavor-detail__description">Tart ruby grapefruit, rose, and a clean rosemary finish.</p>
-              <div class="flavor-detail__chips"><span>citrus</span><span>herbal</span><span>crisp</span></div>
-              <button class="button button--dark add-button" type="button" data-add="Pink Grapefruit">Add a four-pack <span aria-hidden="true">+</span></button>
-            </div>
-          </div>
-          <div class="product-stage flavor-stage flavor-stage--pink" id="flavor-stage">
-            <div class="stage-sun" aria-hidden="true"></div>
-            <span class="stage-caption">THE 0.0% POUR</span>
-            <div class="can-illustration can-illustration--pink" id="feature-can" aria-label="Oddbird Pink Grapefruit can">
-              <span class="can-top"></span><span class="can-rim"></span>
-              <div class="can-label">
-                <span class="can-bird" aria-hidden="true">✳</span>
-                <span class="can-brand">ODD<br />BIRD</span>
-                <span class="can-flavor" id="can-flavor">PINK<br />GRAPEFRUIT</span>
-                <span class="can-small">BOTANICAL<br />SPARKLER</span>
-                <span class="can-abv">0.0%<br />ALC</span>
+            <article class="panel panel--flavor" style="--panel:#f9b4a8; --sun:#fcd0c6" aria-labelledby="f1">
+              <div class="flavor__can"><span class="flavor__sun" aria-hidden="true"></span>
+                <svg class="can" viewBox="0 0 200 560" role="img" aria-label="Oddbird Pink Grapefruit can" data-can3d="pink"><use href="#can-pink" /></svg>
               </div>
-              <span class="can-base"></span>
-            </div>
-            <span class="stage-side-note">12 FL OZ / 355 ML</span>
-            <span class="stage-stamp" aria-hidden="true">01<br /><b>/</b><br />03</span>
-            <span class="stage-shadow" aria-hidden="true"></span>
-            <span class="stage-spark stage-spark--a" aria-hidden="true">✳</span>
-            <span class="stage-spark stage-spark--b" aria-hidden="true">✳</span>
-          </div>
-          <div class="flavor-rail">
-            <span class="flavor-rail__top">Swipe your mood</span>
-            <div class="flavor-rail__dots" aria-hidden="true"><i class="is-active"></i><i></i><i></i></div>
-            <span class="flavor-rail__bottom">01 — 03</span>
+              <div class="flavor__info">
+                <p class="flavor__meta"><span>N° 01</span><span>The bright one</span></p>
+                <h3 class="flavor__name" id="f1">Pink<br /><em>Grapefruit</em></h3>
+                <p class="flavor__desc">Tart ruby grapefruit with a little rose, then a clean rosemary finish. Best on a hot afternoon.</p>
+                <dl class="notes">
+                  <div><dt>Top</dt><dd>Ruby grapefruit</dd></div>
+                  <div><dt>Heart</dt><dd>Rose petal</dd></div>
+                  <div><dt>Finish</dt><dd>Rosemary</dd></div>
+                </dl>
+                <div class="flavor__buy">
+                  <p class="price"><span>$36</span> 12 cans</p>
+                  <button class="btn btn--ink" type="button" data-add="pink"><span class="btn__text" data-text="Add to cart">Add to cart</span></button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel panel--flavor" style="--panel:#f58a3a; --sun:#f9a560" aria-labelledby="f2">
+              <div class="flavor__can"><span class="flavor__sun" aria-hidden="true"></span>
+                <svg class="can" viewBox="0 0 200 560" role="img" aria-label="Oddbird Blood Orange can" data-can3d="orange"><use href="#can-orange" /></svg>
+              </div>
+              <div class="flavor__info">
+                <p class="flavor__meta"><span>N° 02</span><span>The bold one</span></p>
+                <h3 class="flavor__name" id="f2">Blood<br /><em>Orange</em></h3>
+                <p class="flavor__desc">Juicy blood orange against bitter peel, warmed with cardamom. Pour it when you'd usually reach for an aperitivo.</p>
+                <dl class="notes">
+                  <div><dt>Top</dt><dd>Blood orange</dd></div>
+                  <div><dt>Heart</dt><dd>Bitter peel</dd></div>
+                  <div><dt>Finish</dt><dd>Cardamom</dd></div>
+                </dl>
+                <div class="flavor__buy">
+                  <p class="price"><span>$36</span> 12 cans</p>
+                  <button class="btn btn--ink" type="button" data-add="orange"><span class="btn__text" data-text="Add to cart">Add to cart</span></button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel panel--flavor" style="--panel:#f1dc82; --sun:#f7ebb4" aria-labelledby="f3">
+              <div class="flavor__can"><span class="flavor__sun" aria-hidden="true"></span>
+                <svg class="can" viewBox="0 0 200 560" role="img" aria-label="Oddbird Yuzu Bloom can" data-can3d="yuzu"><use href="#can-yuzu" /></svg>
+              </div>
+              <div class="flavor__info">
+                <p class="flavor__meta"><span>N° 03</span><span>The soft one</span></p>
+                <h3 class="flavor__name" id="f3">Yuzu<br /><em>Bloom</em></h3>
+                <p class="flavor__desc">Sharp yuzu softened by elderflower, with lemon balm at the end. Light enough for brunch.</p>
+                <dl class="notes">
+                  <div><dt>Top</dt><dd>Yuzu</dd></div>
+                  <div><dt>Heart</dt><dd>Elderflower</dd></div>
+                  <div><dt>Finish</dt><dd>Lemon balm</dd></div>
+                </dl>
+                <div class="flavor__buy">
+                  <p class="price"><span>$36</span> 12 cans</p>
+                  <button class="btn btn--ink" type="button" data-add="yuzu"><span class="btn__text" data-text="Add to cart">Add to cart</span></button>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
-      <section class="mix-section" id="mix" aria-labelledby="mix-title">
-        <div class="mix-copy">
-          <p class="eyebrow eyebrow--light"><span>✳</span> Pick a mood</p>
-          <h2 id="mix-title">Make it a<br /><em>mixer.</em></h2>
-          <p>Choose a flavor, add a splash of something fresh, and finish with a garnish. The guide will give you a place to start.</p>
-          <a class="text-link text-link--light" href="#mix-builder">Meet your mix <span aria-hidden="true">↓</span></a>
-          <span class="mix-scribble mix-scribble--one" aria-hidden="true">✳</span>
-        </div>
-        <div class="mix-builder" id="mix-builder">
-          <div class="mix-builder__top">
-            <span class="mix-builder__kicker">THE ODD LITTLE MIXER</span>
-            <span class="mix-builder__count">01 / 03</span>
+      <!-- ============ MIXED CASE ============ -->
+      <section class="mixed" id="mixed" aria-labelledby="mixed-title">
+        <div class="wrap mixed__grid">
+          <div class="mixed__stage" aria-hidden="true">
+            <span class="mixed__floor"></span>
+            <div class="mixed__can mixed__can--l" data-fan="l" data-can3d="pink" data-yaw="0.18"><svg class="can" viewBox="0 0 200 560"><use href="#can-pink" /></svg></div>
+            <div class="mixed__can mixed__can--r" data-fan="r" data-can3d="yuzu" data-yaw="-0.18"><svg class="can" viewBox="0 0 200 560"><use href="#can-yuzu" /></svg></div>
+            <div class="mixed__can mixed__can--c" data-fan="c" data-can3d="orange" data-yaw="0"><svg class="can" viewBox="0 0 200 560"><use href="#can-orange" /></svg></div>
+            <p class="mixed__tag"><span>12</span>cans<br />mixed</p>
           </div>
-          <h3 class="recipe-title">The Pink<br /><em>Outlook</em></h3>
-          <div class="recipe-tabs" role="group" aria-label="Choose a drink mood">
-            <button type="button" class="recipe-tab is-active" aria-pressed="true" data-recipe="bright">Bright</button>
-            <button type="button" class="recipe-tab" aria-pressed="false" data-recipe="bitter">Bittersweet</button>
-            <button type="button" class="recipe-tab" aria-pressed="false" data-recipe="soft">Soft</button>
-          </div>
-          <div class="recipe-body">
-            <div class="recipe-glass" aria-hidden="true">
-              <div class="glass-stem"><span class="glass-liquid"></span><i class="garnish garnish--orange"></i><i class="garnish garnish--herb"></i></div>
-              <span class="glass-shadow"></span>
+          <div class="mixed__copy">
+            <p class="section-index">(03) <span>The mixed case</span></p>
+            <h2 class="mixed__title" id="mixed-title" data-split>Can’t choose? <em>Don’t.</em></h2>
+            <p class="mixed__lede">Four of each flavor, twelve cans in all. It's the easiest way to find your bird, and a good thing to bring to dinner.</p>
+            <ul class="checklist">
+              <li>4 × Pink Grapefruit, 4 × Blood Orange, 4 × Yuzu Bloom</li>
+              <li>Free shipping on two cases or more</li>
+              <li>Skip, swap or pause a subscription any time</li>
+            </ul>
+            <div class="mixed__buy">
+              <p class="price price--lg"><span>$36</span> 12 cans · $3 per can</p>
+              <button class="btn btn--ink btn--lg" type="button" data-add="mixed"><span class="btn__text" data-text="Add the mixed case">Add the mixed case</span></button>
             </div>
-            <div class="recipe-info">
-              <p class="recipe-description" aria-live="polite">Grapefruit, lime, and soda over ice.</p>
-              <ol class="recipe-steps">
-                <li><span>01</span><b id="recipe-step-one">Pink Grapefruit</b><small>Fill a glass with ice</small></li>
-                <li><span>02</span><b id="recipe-step-two">Lime, ½ oz</b><small>Add a squeeze of fresh citrus</small></li>
-                <li><span>03</span><b id="recipe-step-three">Soda, to top</b><small>Pour, stir once, garnish</small></li>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RITUALS ============ -->
+      <section class="rituals" id="rituals" aria-labelledby="rituals-title">
+        <div class="wrap rituals__head">
+          <p class="section-index section-index--light">(04) <span>Rituals</span></p>
+          <h2 class="rituals__title" id="rituals-title" data-split>Three-minute <em>rituals.</em></h2>
+          <p class="rituals__lede">Oddbird is great straight from the can. Add ice, something fresh and a garnish, and you've made a proper drink.</p>
+        </div>
+        <div class="wrap rituals__grid">
+          <div class="recipes" role="tablist" aria-label="Recipes" aria-orientation="vertical">
+            <button class="recipe-tab" role="tab" id="tab-bright" aria-controls="recipe-panel" aria-selected="true" data-recipe="bright">
+              <span class="recipe-tab__no">01</span>
+              <span class="recipe-tab__name">The Pink Outlook</span>
+              <span class="recipe-tab__mood">Bright</span>
+            </button>
+            <button class="recipe-tab" role="tab" id="tab-bitter" aria-controls="recipe-panel" aria-selected="false" tabindex="-1" data-recipe="bitter">
+              <span class="recipe-tab__no">02</span>
+              <span class="recipe-tab__name">The Good Detour</span>
+              <span class="recipe-tab__mood">Bittersweet</span>
+            </button>
+            <button class="recipe-tab" role="tab" id="tab-soft" aria-controls="recipe-panel" aria-selected="false" tabindex="-1" data-recipe="soft">
+              <span class="recipe-tab__no">03</span>
+              <span class="recipe-tab__name">The Soft Landing</span>
+              <span class="recipe-tab__mood">Soft</span>
+            </button>
+          </div>
+
+          <div class="recipe-card" id="recipe-panel" role="tabpanel" aria-labelledby="tab-bright" tabindex="0">
+            <div class="glass" aria-hidden="true">
+              <svg viewBox="0 0 240 300">
+                <defs>
+                  <clipPath id="glass-inside"><path d="M52 62 L66 262 Q67 272 78 272 H162 Q173 272 174 262 L188 62 Z" /></clipPath>
+                </defs>
+                <g clip-path="url(#glass-inside)">
+                  <rect class="glass__liquid" data-liquid x="40" y="92" width="160" height="200" fill="#f26f5c" />
+                  <rect class="glass__sheen" x="70" y="92" width="10" height="190" fill="#fff" opacity=".18" />
+                  <g class="glass__bubbles" fill="#fff" opacity=".55">
+                    <circle cx="96" cy="250" r="2" /><circle cx="140" cy="230" r="1.6" /><circle cx="118" cy="205" r="2.2" />
+                    <circle cx="150" cy="180" r="1.4" /><circle cx="104" cy="160" r="1.8" /><circle cx="128" cy="130" r="1.3" />
+                  </g>
+                  <g fill="none" stroke="#fff6ea" stroke-opacity=".55" stroke-width="2">
+                    <rect x="78" y="104" width="44" height="44" rx="6" transform="rotate(-12 100 126)" />
+                    <rect x="118" y="120" width="42" height="42" rx="6" transform="rotate(14 139 141)" />
+                    <rect x="92" y="160" width="40" height="40" rx="6" transform="rotate(6 112 180)" />
+                  </g>
+                </g>
+                <path d="M50 58 L64 262 Q66 276 80 276 H160 Q174 276 176 262 L190 58" fill="none" stroke="#f6efe4" stroke-width="2.5" stroke-linecap="round" />
+                <ellipse cx="120" cy="58" rx="70" ry="6" fill="none" stroke="#f6efe4" stroke-width="2" opacity=".6" />
+                <g class="garnish garnish--citrus" data-garnish="citrus">
+                  <circle cx="176" cy="66" r="30" fill="#f9a35c" />
+                  <circle cx="176" cy="66" r="25" fill="#fbd6a8" />
+                  <g stroke="#f9a35c" stroke-width="2">
+                    <line x1="176" y1="41" x2="176" y2="91" /><line x1="151" y1="66" x2="201" y2="66" />
+                    <line x1="158" y1="48" x2="194" y2="84" /><line x1="194" y1="48" x2="158" y2="84" />
+                  </g>
+                  <circle cx="176" cy="66" r="4" fill="#f9a35c" />
+                </g>
+                <g class="garnish garnish--sprig" data-garnish="sprig">
+                  <path d="M150 140 C 156 90, 170 50, 196 10" fill="none" stroke="#5a6b3a" stroke-width="3" stroke-linecap="round" />
+                  <g fill="#6f8447">
+                    <ellipse cx="160" cy="92" rx="4" ry="13" transform="rotate(-50 160 92)" /><ellipse cx="172" cy="86" rx="4" ry="13" transform="rotate(40 172 86)" />
+                    <ellipse cx="168" cy="62" rx="4" ry="13" transform="rotate(-55 168 62)" /><ellipse cx="182" cy="56" rx="4" ry="13" transform="rotate(35 182 56)" />
+                    <ellipse cx="180" cy="34" rx="4" ry="12" transform="rotate(-60 180 34)" /><ellipse cx="193" cy="30" rx="4" ry="11" transform="rotate(30 193 30)" />
+                  </g>
+                </g>
+                <g class="garnish garnish--mint" data-garnish="mint">
+                  <path d="M120 58 C 122 40, 128 30, 136 22" fill="none" stroke="#4f7a45" stroke-width="2.5" stroke-linecap="round" />
+                  <path d="M134 24 C 112 10, 98 24, 104 40 C 118 42, 132 36, 134 24 Z" fill="#7aa86a" />
+                  <path d="M134 24 C 150 4, 170 14, 164 32 C 150 38, 138 34, 134 24 Z" fill="#8cbc78" />
+                  <path d="M134 24 L110 34 M134 24 L158 28" stroke="#4f7a45" stroke-width="1.2" />
+                </g>
+              </svg>
+            </div>
+            <div class="recipe-card__body" data-recipe-body>
+              <p class="recipe-card__mood" data-r="mood">Bright · Pink Grapefruit</p>
+              <h3 class="recipe-card__name" data-r="name">The Pink <em>Outlook</em></h3>
+              <p class="recipe-card__desc" data-r="desc">Grapefruit, lime and a little extra fizz. Make it in a tall glass with plenty of ice.</p>
+              <ol class="steps" data-r="steps">
+                <li><span>Fill</span>a tall glass with ice</li>
+                <li><span>Pour</span>one can of Pink Grapefruit and ½ oz fresh lime</li>
+                <li><span>Top</span>with soda and finish with an orange wheel</li>
               </ol>
+              <button class="link-arrow link-arrow--light" type="button" data-copy-recipe>Copy recipe <span aria-hidden="true">↗</span></button>
             </div>
           </div>
-          <button class="recipe-copy" id="copy-recipe" type="button"><span>Copy this recipe</span><i aria-hidden="true">↗</i></button>
         </div>
       </section>
 
-      <section class="manifesto section-pad">
-        <div class="manifesto__seal" aria-hidden="true"><span>THE ODD<br />LITTLE<br />PROMISE</span><b>✳</b></div>
-        <p class="manifesto__lead">Pour it over ice.<br />Pass it around.</p>
-        <p class="manifesto__body">For dinner with friends, a quiet night in, or whatever you’ve got planned. Oddbird belongs wherever you want a good drink.</p>
-        <a class="button button--light" href="#flock">Find your bird <span aria-hidden="true">↗</span></a>
-      </section>
-
-      <section class="newsletter">
-        <div class="newsletter__mark" aria-hidden="true">✳</div>
-        <div>
-          <p class="eyebrow">A note from Oddbird</p>
-          <h2>Stay in <em>touch.</em></h2>
-          <p>Get the occasional note about new flavors and recipes.</p>
+      <!-- ============ NEWSLETTER ============ -->
+      <section class="newsletter" id="newsletter" aria-labelledby="newsletter-title">
+        <div class="wrap newsletter__grid">
+          <h2 class="newsletter__title" id="newsletter-title" data-split>Letters from <em>the nest.</em></h2>
+          <div class="newsletter__side">
+            <p>New flavors, seasonal recipes and the odd invitation, about once a month.</p>
+            <form class="field" data-newsletter novalidate>
+              <label class="visually-hidden" for="email">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+              <button class="btn btn--ink" type="submit"><span class="btn__text" data-text="Subscribe">Subscribe</span></button>
+            </form>
+            <p class="field__msg" data-newsletter-msg aria-live="polite"></p>
+          </div>
         </div>
-        <form class="newsletter-form" id="newsletter-form">
-          <label class="visually-hidden" for="email">Your email address</label>
-          <input id="email" name="email" type="email" placeholder="Your email address" required />
-          <button type="submit" aria-label="Join the Oddbird newsletter">↗</button>
-        <p class="newsletter-message" id="newsletter-message" aria-live="polite">This signup is a preview interaction.</p>
-        </form>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <a class="wordmark wordmark--footer" href="#" aria-label="Oddbird home">odd<span>bird</span><i>®</i></a>
-      <p>Something good to pour.</p>
-      <div class="footer-links"><a href="#flock">Shop</a><a href="#mix">Drink mixer</a><a href="#why-odd">Our story</a><a href="mailto:hello@oddbird.example">Say hello</a></div>
-      <span class="footer-fine">© 2026 Oddbird Beverage Co. A fictional brand concept.</span>
+    <footer class="footer">
+      <div class="wrap footer__top">
+        <div class="footer__col">
+          <h2 class="footer__label">Shop</h2>
+          <a href="#lineup">Pink Grapefruit</a><a href="#lineup">Blood Orange</a><a href="#lineup">Yuzu Bloom</a><a href="#mixed">Mixed case</a>
+        </div>
+        <div class="footer__col">
+          <h2 class="footer__label">Oddbird</h2>
+          <a href="#story">Our story</a><a href="#rituals">Rituals</a><a href="#newsletter">Newsletter</a>
+        </div>
+        <div class="footer__col">
+          <h2 class="footer__label">Say hello</h2>
+          <a href="mailto:hello@oddbird.example">hello@oddbird.example</a>
+          <a href="#top" data-to-top>Back to top ↑</a>
+        </div>
+      </div>
+      <p class="footer__word" aria-hidden="true" data-footer-word><span>O</span><span>d</span><span>d</span><span>b</span><span>i</span><span>r</span><span>d</span></p>
+      <div class="wrap footer__legal">
+        <span>© 2026 Oddbird Beverage Co.</span>
+        <span>A fictional brand concept.</span>
+      </div>
     </footer>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <!-- ============ CART DRAWER ============ -->
+    <div class="scrim" data-cart-close data-scrim></div>
+    <aside class="cart" id="cart" role="dialog" aria-modal="true" aria-labelledby="cart-title" inert>
+      <div class="cart__head">
+        <h2 id="cart-title">Your cart</h2>
+        <button class="cart__close" type="button" data-cart-close aria-label="Close cart">Close</button>
+      </div>
+      <ul class="cart__items" data-cart-items></ul>
+      <div class="cart__empty" data-cart-empty>
+        <p>Your cart is empty.</p>
+        <a class="link-arrow" href="#lineup" data-cart-close>Browse the flavors <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="cart__foot">
+        <p class="cart__ship" data-cart-ship></p>
+        <div class="cart__total"><span>Subtotal</span><b data-cart-total>$0</b></div>
+        <button class="btn btn--ink btn--block" type="button" data-checkout><span class="btn__text" data-text="Checkout">Checkout</span></button>
+      </div>
+    </aside>
+
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
   </body>
 </html>
